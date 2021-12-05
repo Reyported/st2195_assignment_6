@@ -41,8 +41,8 @@ plot(fxwithspeeches$date, fxwithspeeches$value, type='l', xlab='Date',
 hist(fxwithspeeches$value, xlab="value", main="Histogram of value", breaks = sqrt(nrow(fxwithspeeches)))
 
 #since histogram shows possible few values that are outliers on the right side, boxplot of entire dataset is graphed
-(ggplot(fxwithspeeches) + aes(x="", y=value)+
-  geom_boxplot() )
+ggplot(fxwithspeeches) + aes(x="", y=value)+
+  geom_boxplot() 
 #no outliers in full dataset boxplot, investigating further by splicing over 10 year breaks
 fxwithspeeches %>% mutate(dategroup = cut(date, breaks = "10 years")) %>%
   ggplot() +
@@ -59,6 +59,13 @@ fxwithspeeches %>% mutate(dategroup = cut(date, breaks = "1 year")) %>%
  #outliers using z-score (insignificant when z>)
  #x$z_scores <- as.data.frame(abs((x$value-mean(x$value))/sd(x$value)))
 
+#extend the dataset with good news and bad news
+fxwithspeeches$good_news <- ifelse(fxwithspeeches$value>"1.005",1,0)
+fxwithspeeches$bad_news <- ifelse(fxwithspeeches$value<"0.995",1,0)
 
- 
+#remove contents NA
+fxwithspeeches$contents[fxwithspeeches$contents==""] <- NA
+fxwithspeecges %>% drop_na(contents)
+
+
                            
