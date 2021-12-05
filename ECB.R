@@ -3,6 +3,8 @@ library(tidyr)
 library(zoo)
 library(text2vec)
 
+
+
 #load and merge the datasets
 speeches <- read.csv("speeches.csv", header = TRUE, sep="|" )
 speeches <- speeches[,c("date","contents")]
@@ -19,14 +21,20 @@ fx %>%
   group_by(date) %>%
   arrange(date)
 
+
 fxwithspeeches <- left_join(fx,speeches, by="date", all.x=TRUE)
 
-#remove rows with empty, na or wrong values in date column
+#change to correct column classes
 fxwithspeeches$date <- as.Date(fxwithspeeches$date, format= "%Y-%m-%d")
-fxwithspeeches %>% drop_na(date)
+fxwithspeeches$value <- as.numeric(fxwithspeeches$value)
+
+#attempt to locf with day after data for missing values
+fxwithspeeches$value <- na.locf(fxwithspeeches$value, na.rm=TRUE, fromLast=TRUE)
+
+summary(fxwithspeeches)
 
 #check for outliers
-plot(fxwithspeeches$date, dxwithspeeches$value, type='0', xlab='Date', 
+plot(fxwithspeeches$date, fxwithspeeches$value, type='o', xlab='Date', 
      ylab='Exchange Rate', main='Changes in exchange rate over time')
 
 boxplot(value ~ Year, data=fxwithspeeches)
